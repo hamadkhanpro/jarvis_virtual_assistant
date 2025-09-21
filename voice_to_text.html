@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Voice Typing</title>
+  <link rel="shortcut icon" href="avatar.png" type="image/x-icon">
+  <style>
+    :root{
+    --bg:#f6f8fb; 
+    --card:#ffffff; 
+    --accent:#2b6ef6; 
+    --muted:#667085; 
+  }
+
+    *{
+    box-sizing:border-box
+  }
+
+    body{
+    font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans',sans-serif;
+    margin:0;
+    background:var(--bg);
+    color:#0f172a
+  }
+
+    .wrap{
+    max-width:900px;
+    margin:36px auto;
+    padding:20px
+  }
+
+    .card{
+    background:var(--card);
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 6px 18px rgba(12,20,40,0.06)
+  }
+
+    h1{
+    margin:0 0 6px; 
+    font-size:20px; 
+    color: #0f172a;
+  }
+
+    p.lead{
+    margin:0 0 18px;
+    color:var(--muted)
+  }
+
+    .controls{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:12px
+  }
+
+    button{
+    background:var(--accent);
+    color:white;
+    border:0;
+    padding:10px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600
+  }
+
+    button.ghost{
+    background:transparent;
+    color:var(--accent);
+    border:1px solid rgba(43,110,246,0.12)
+  }
+
+    button.danger{
+    background:#ef4444
+  }
+
+    select,input{
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #e6e9ef
+  }
+
+    .status{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:var(--muted);
+    font-size:14px
+  }
+
+    .dot{
+    width:10px;
+    height:10px;
+    border-radius:50%
+  }
+
+    .dot.listening{
+    background:#10b981
+  }
+
+    .dot.idle{
+    background:#d1d5db
+  }
+
+    textarea{
+    width:100%;
+    min-height:320px;
+    border-radius:10px;
+    border:1px solid #e6e9ef;
+    padding:14px;
+    font-size:15px;
+    resize:vertical
+  }
+
+    .tools{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+    flex-wrap:wrap;
+    color:#667085;
+  }
+
+    .footer{
+    margin-top:14px;
+    color:var(--muted);
+    font-size:13px
+  }
+
+    @media(max-width:560px){
+    .controls{
+    flex-direction:column
+  }
+
+    button{
+    width:100%
+  }
+}
+  </style>
+
+</head>
+<body>
+    <!-- Chatling Button -->
+    <script src="script.js"></script>
+    <script> window.chtlConfig = { chatbotId: "6394193585" } </script>
+    <script async data-id="6394193585" id="chtl-script" type="text/javascript" src="https://chatling.ai/js/embed.js"></script>
+    <!-- End Chatling Button -->
+
+  <div class="wrap">
+    <div class="card">
+      <h1>Voice Typing — Mic se likhiye</h1>
+      <p class="lead">Start/stop karne ke liye microphone button dabayein. Interim results screen pe turant dikhenge.</p>
+
+      <div class="controls">
+        <button id="toggle">Start Listening 🎤</button>
+        <select id="lang">
+          <option value="en-US">English (US)</option>
+          <option value="en-GB">English (UK)</option>
+          <option value="ur-PK">Urdu (Pakistan)</option>
+          <option value="ps-AF">Pashto (Afghanistan)</option>
+          <option value="ps-PK">Pashto (Pakistan) (if supported)</option>
+          <option value="hi-IN">Hindi (India)</option>
+        </select>
+        <label class="status" title="recognition status"><span id="dot" class="dot idle"></span><span id="statText">Idle</span></label>
+        <button id="clear" class="ghost">Clear</button>
+        <button id="copy" class="ghost">Copy</button>
+        <button id="download" class="ghost">Download .txt</button>
+      </div>
+
+      <textarea id="editor" placeholder="Yahan aapki voice se likha hua text aayega..."></textarea>
+
+      <div class="tools">
+        <label><input type="checkbox" id="continuous" checked> Continuous (rukne par bhi chalti rahe)</label>
+        <label><input type="checkbox" id="interim" checked> Show interim results</label>
+        <label><input type="checkbox" id="autoPunct"> Try simple auto-punctuation</label>
+      </div>
+
+      <p class="footer">Tip: Press <kbd>Ctrl</kbd>+<kbd>M</kbd> to toggle listening. Mic permission required. Note: Speech recognition may send audio to the browser vendor's servers.</p>
+      <button class="back-button" onclick="window.location.href='index.html'">Back to Main</button>
+    </div>
+  </div>
+
+  <script>
+  // Voice Typing using Web Speech API
+  (function(){
+    const startBtn = document.getElementById('toggle');
+    const editor = document.getElementById('editor');
+    const langSel = document.getElementById('lang');
+    const dot = document.getElementById('dot');
+    const statText = document.getElementById('statText');
+    const clearBtn = document.getElementById('clear');
+    const copyBtn = document.getElementById('copy');
+    const downloadBtn = document.getElementById('download');
+    const contCheckbox = document.getElementById('continuous');
+    const interimCheckbox = document.getElementById('interim');
+    const autoPunct = document.getElementById('autoPunct');
+
+    // cross-browser support
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SpeechRecognition){
+      startBtn.disabled = true;
+      statText.textContent = 'Browser not supported — use Chrome/Edge (desktop)';
+      return;
+    }
+
+    const rec = new SpeechRecognition();
+    rec.continuous = contCheckbox.checked;
+    rec.interimResults = interimCheckbox.checked;
+    rec.lang = langSel.value;
+
+    let listening = false;
+    let interimSpan = '';
+
+    function setStatus(listen){
+      listening = !!listen;
+      if(listening){
+        startBtn.textContent = 'Stop Listening ⏹️';
+        dot.classList.remove('idle'); dot.classList.add('listening');
+        statText.textContent = 'Listening...';
+      } else {
+        startBtn.textContent = 'Start Listening 🎤';
+        dot.classList.remove('listening'); dot.classList.add('idle');
+        statText.textContent = 'Idle';
+      }
+    }
+
+    function tryAutoPunct(text){
+      if(!autoPunct.checked) return text;
+      // simple heuristics: capitalize sentence starts and add period for long phrases
+      text = text.replace(/\s+([?.!])$/,'$1');
+      text = text.replace(/(^|[\n\.!?]\s+)([a-z])/g, (m,p,c)=> p + c.toUpperCase());
+      if(text.length>30 && !/[.?!]$/.test(text)) text = text + '.';
+      return text;
+    }
+
+    rec.onstart = ()=> setStatus(true);
+    rec.onend = ()=> {
+      setStatus(false);
+      // if continuous is checked and user didn't manually stop, restart
+      if(contCheckbox.checked && !manuallyStopped){
+        try{
+          rec.start();
+        }catch(e){/*ignore*/}
+      }
+    };
+
+    let manuallyStopped = false;
+
+    rec.onerror = (e)=>{
+      console.error('Speech error', e);
+      statText.textContent = 'Error: ' + (e.error || 'unknown');
+      setStatus(false);
+    };
+
+    rec.onresult = (ev)=>{
+      let finalTranscript = '';
+      let interimTranscript = '';
+      for(let i = ev.resultIndex; i < ev.results.length; ++i){
+        if(ev.results[i].isFinal){
+          finalTranscript += ev.results[i][0].transcript;
+        } else {
+          interimTranscript += ev.results[i][0].transcript;
+        }
+      }
+
+      if(interimCheckbox.checked){
+        // show interim in editor but don't permanently add until final
+        // we'll render final + interim (interim in brackets)
+        const before = editor.value.replace(/\n\[INTERIM\][\s\S]*$/,'');
+        editor.value = before + (before && !before.endsWith('\n') ? '\n' : '') + tryAutoPunct(finalTranscript);
+        if(interimTranscript) editor.value += '\n[INTERIM] ' + interimTranscript;
+      } else {
+        if(finalTranscript) {
+          editor.value += (editor.value && !editor.value.endsWith('\n') ? '\n' : '') + tryAutoPunct(finalTranscript);
+        }
+      }
+    };
+
+    // wire controls
+    startBtn.addEventListener('click', ()=>{
+      if(!listening){
+        manuallyStopped = false;
+        rec.lang = langSel.value;
+        rec.continuous = contCheckbox.checked;
+        rec.interimResults = interimCheckbox.checked;
+        try{ rec.start(); } catch(e){ console.warn(e); }
+      } else {
+        manuallyStopped = true;
+        rec.stop();
+      }
+    });
+
+    clearBtn.addEventListener('click', ()=> editor.value = '');
+    copyBtn.addEventListener('click', ()=>{
+      navigator.clipboard.writeText(editor.value).then(()=>{
+        statText.textContent = 'Copied to clipboard';
+        setTimeout(()=> statText.textContent = listening? 'Listening...':'Idle',1200);
+      }).catch(()=> alert('Copy failed'));
+    });
+
+    downloadBtn.addEventListener('click', ()=>{
+      const blob = new Blob([editor.value], {type:'text/plain;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'voice-typing.txt';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    langSel.addEventListener('change', ()=>{ rec.lang = langSel.value; });
+    contCheckbox.addEventListener('change', ()=> rec.continuous = contCheckbox.checked);
+    interimCheckbox.addEventListener('change', ()=> rec.interimResults = interimCheckbox.checked);
+
+    // keyboard shortcut Ctrl+M to toggle
+    window.addEventListener('keydown', (e)=>{
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'm'){
+        e.preventDefault(); startBtn.click();
+      }
+    });
+
+    // autofocus editor
+    editor.addEventListener('input', ()=>{});
+
+    // basic accessibility labels
+    startBtn.title = 'Start/Stop listening (Ctrl+M)';
+
+    // initialize status
+    setStatus(false);
+
+  })();
+  </script>
+
+
+<!-- Dark Mode Switch Theme -->
+  <label class="toggle">
+    <input id="themeToggle" type="checkbox" aria-label="Toggle dark mode">
+    <span class="track"><span class="knob"></span></span>
+  </label>
+
+  <script>
+    (function(){
+      const STORAGE_KEY = 'site-theme';
+      const html = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+
+      function applyTheme(theme){
+        if(theme === 'dark'){
+          html.setAttribute('data-theme','dark');
+          toggle.checked = true;
+        } else {
+          html.removeAttribute('data-theme');
+          toggle.checked = false;
+        }
+      }
+
+      function initialTheme(){
+        try{
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if(saved === 'dark' || saved === 'light') return saved;
+        }catch(e){}
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      applyTheme(initialTheme());
+
+      toggle.addEventListener('change', () => {
+        const newTheme = toggle.checked ? 'dark' : 'light';
+        applyTheme(newTheme);
+        try{ localStorage.setItem(STORAGE_KEY,newTheme); }catch(e){}
+      });
+    })();
+  </script>
+<!-- End Dark Mode Switch Theme -->
+
+
+<!-- Dark Mode Switch Theme -->
+  <style>
+    :root{
+      --bg: #f0f0f0;
+      --text: #0f1724;
+      --accent: #0066ff;
+      --transition: 250ms ease;
+    }
+    html[data-theme='dark']{
+      --bg: #0b1220;
+      --text: #e6eef8;
+      --accent: #48a6ff;
+    }
+    body{
+      background:var(--bg);
+      color:var(--text);
+      transition: background var(--transition), color var(--transition);
+    }
+    .toggle{
+      --w:52px; --h:30px; --pad:4px;
+      position: absolute;
+      top:1rem;
+      right:1rem;
+      width:var(--w);
+      height:var(--h);
+      z-index:1000;
+    }
+    .toggle input{
+      position:absolute;inset:0;opacity:0;cursor:pointer;
+    }
+    .track{
+      position:absolute;inset:0;border-radius:999px;background:rgba(0,0,0,0.08);
+      display:flex;align-items:center;padding:var(--pad);
+      transition:background var(--transition);
+    }
+    html[data-theme='dark'] .track{background:rgba(255,255,255,0.1)}
+    .knob{
+      width:calc(var(--h) - var(--pad)*2);
+      height:calc(var(--h) - var(--pad)*2);
+      border-radius:999px;background:var(--bg);
+      box-shadow:0 2px 6px rgba(0,0,0,0.2);
+      transform:translateX(0);
+      transition:transform var(--transition), background var(--transition);
+    }
+    .toggle input:checked + .track{
+      background:var(--accent);
+    }
+    .toggle input:checked + .track .knob{
+      transform:translateX(calc(var(--w) - var(--h)));
+    }
+  </style>
+<!-- End Dark Mode Switch Theme -->
+
+
+<!-- Menu Button -->
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+<!-- End Menu Button -->
+
+
+<!-- Social Links -->
+  <div class="social-links" id="socialLinks">
+    <ul>
+      <li><a href="https://hamadkhan.infy.uk" target="_blank"><img src="website.png" alt="Website"></a></li>
+      <li><a href="https://github.com/hamadkhanpro" target="_blank"><img src="gethub.png" alt="GitHub"></a></li>
+      <li><a href="https://www.fiverr.com/hamadkhantech/" target="_blank"><img src="fiverr.png" alt="Fiverr"></a></li>
+      <li><a href="https://www.upwork.com/freelancers/hamadk27" target="_blank"><img src="upwork.png" alt="UpWork"></a></li>
+      <li><a href="https://www.youtube.com/@hamadkhantech" target="_blank"><img src="youtube.png" alt="YouTube"></a></li>
+      <li><a href="https://www.facebook.com/hamadkhan987" target="_blank"><img src="facebook.png" alt="Facebook"></a></li>
+      <li><a href="https://www.instagram.com/hamadkhan_987/" target="_blank"><img src="instagram.png" alt="Instagram"></a></li>
+      <li><a href="https://wa.me/923479787164" target="_blank"><img src="whatsapp.png" alt="WhatsApp"></a></li>
+      <li><a href="https://www.snapchat.com/add/hamadkhan_987" target="_blank"><img src="snapchat.png" alt="Snapchat"></a></li>
+    </ul>
+  </div>
+<!-- End Social Links -->
+
+
+<!-- Menu Social Links -->
+    <script>
+    function toggleMenu() {
+    document.getElementById("socialLinks").classList.toggle("open");}
+  </script>
+<!-- End Menu Social Links -->
+
+
+<style>
+/* Menu Button */
+    .menu-btn {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 1100;
+      width: 40px;
+      height: 40px;
+      background: #48a6ff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+/* End Menu Button */
+
+
+/* Social Links Container */
+    .social-links {
+      position: absolute;
+      top: 68px;
+      left: 17px;
+      z-index: 1000;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.6s ease;
+    }
+
+    .social-links.open {
+      max-height: 600px; /* enough for all items */
+    }
+
+    .social-links ul {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      margin: 0;
+      gap: 10px;
+    }
+
+    .social-links li {
+      list-style: none;
+      border-radius: 50px;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      /* Animation hidden state */
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.5s ease;
+    }
+
+    /* Animate items one by one */
+    .social-links.open li {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .social-links.open li:nth-child(1) { transition-delay: 0.1s; }
+    .social-links.open li:nth-child(2) { transition-delay: 0.2s; }
+    .social-links.open li:nth-child(3) { transition-delay: 0.3s; }
+    .social-links.open li:nth-child(4) { transition-delay: 0.4s; }
+    .social-links.open li:nth-child(5) { transition-delay: 0.5s; }
+    .social-links.open li:nth-child(6) { transition-delay: 0.6s; }
+    .social-links.open li:nth-child(7) { transition-delay: 0.7s; }
+    .social-links.open li:nth-child(8) { transition-delay: 0.8s; }
+    .social-links.open li:nth-child(9) { transition-delay: 0.9s; }
+
+    .social-links li a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .social-links img {
+      width: 25px;
+      height: 25px;
+      object-fit: contain;
+    }
+
+    /* Colors */
+    .social-links li:nth-child(1) { background: #d42b7a; } /* Website */
+    .social-links li:nth-child(2) { background: #424242; } /* GitHub */
+    .social-links li:nth-child(3) { background: #1DBF73; } /* Fiverr */
+    .social-links li:nth-child(4) { background: #14A800; } /* UpWork */
+    .social-links li:nth-child(5) { background: #FF0000; } /* YouTube */
+    .social-links li:nth-child(6) { background: #1877f2; } /* Facebook */
+    .social-links li:nth-child(7) { background: radial-gradient(circle at 30% 107%, 
+      #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+    } /* Instagram */
+    .social-links li:nth-child(8) { background: #25D366; } /* WhatsApp */
+    .social-links li:nth-child(9) { background: #FFFC00; } /* Snapchat */
+
+    .social-links li:hover {
+      transform: scale(1.1);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .menu-btn {
+        top: 15px;
+        left: 15px;
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
+      }
+      .social-links {
+        top: 60px;
+        left: 15px;
+      }
+      .social-links li {
+        width: 30px;
+        height: 30px;
+      }
+      .social-links img {
+        width: 16px;
+        height: 16px;
+      }
+    }
+</style>
+<!-- End Social Links Container -->
+</body>
+</html>

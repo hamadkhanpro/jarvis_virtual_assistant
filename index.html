@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis Virtual Assistant</title>
+    <link rel="shortcut icon" href="avatar.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <img src="ai.png" alt="logo" id="logo">
+    <h1><span id="name">I'm <span id="va">Jarvis,</span> Your </span><span id="va">Virtual Assistant</span></h1>
+    <img src="aiVoice.gif" alt="voice" id="voice">
+    <button id="btn"><img src="mic.svg" alt="mic"><span id="content">Click here for talk to me</span></button>
+
+    <!-- Chatling Button -->
+    <script src="script.js"></script>
+    <script> window.chtlConfig = { chatbotId: "6394193585" } </script>
+    <script async data-id="6394193585" id="chtl-script" type="text/javascript" src="https://chatling.ai/js/embed.js"></script>
+    <!-- End Chatling Button -->
+
+    <!-- 4 Buttons -->
+    <div class="button-container000">
+      <a href="voice_to_text.html"><button000 type="submit" id="submit-btn000">Voice Typing</button000></a>
+      <a href="https://www.express.com.pk/"><button000 type="submit" id="submit-btn000">Daily News</button000></a>
+      <a href="resume_home_page.html"><button000 type="submit" id="submit-btn000">Cv Generate</button000></a>
+      <a href="games.html"><button000 type="submit" id="submit-btn000">Games Play</button000></a>
+    </div>
+    <!-- End 4 Buttons -->
+
+    <!-- Menu Button -->
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <!-- End Menu Button -->
+
+    <!-- Social Links -->
+    <div class="social-links" id="socialLinks">
+      <ul>
+        <li><a href="https://hamadkhan.infy.uk" target="_blank"><img src="website.png" alt="Website"></a></li>
+        <li><a href="https://github.com/hamadkhanpro" target="_blank"><img src="gethub.png" alt="GitHub"></a></li>
+        <li><a href="https://www.fiverr.com/hamadkhantech/" target="_blank"><img src="fiverr.png" alt="Fiverr"></a></li>
+        <li><a href="https://www.upwork.com/freelancers/hamadk27" target="_blank"><img src="upwork.png" alt="UpWork"></a></li>
+        <li><a href="https://www.youtube.com/@hamadkhantech" target="_blank"><img src="youtube.png" alt="YouTube"></a></li>
+        <li><a href="https://www.facebook.com/hamadkhan987" target="_blank"><img src="facebook.png" alt="Facebook"></a></li>
+        <li><a href="https://www.instagram.com/hamadkhan_987/" target="_blank"><img src="instagram.png" alt="Instagram"></a></li>
+        <li><a href="https://wa.me/923479787164" target="_blank"><img src="whatsapp.png" alt="WhatsApp"></a></li>
+        <li><a href="https://www.snapchat.com/add/hamadkhan_987" target="_blank"><img src="snapchat.png" alt="Snapchat"></a></li>
+      </ul>
+    </div>
+    <!-- End Social Links -->
+
+    <!-- Menu Social Links -->
+    <script>
+     function toggleMenu() {
+     document.getElementById("socialLinks").classList.toggle("open");}
+    </script>
+    <!-- End Menu Social Links -->
+
+    <!-- Dark Mode Switch Theme -->
+    <label class="toggle">
+      <input id="themeToggle" type="checkbox" aria-label="Toggle dark mode">
+      <span class="track"><span class="knob"></span></span>
+    </label>
+
+    <script>
+      (function(){
+        const STORAGE_KEY = 'site-theme';
+        const html = document.documentElement;
+        const toggle = document.getElementById('themeToggle');
+
+        function applyTheme(theme){
+          if(theme === 'dark'){
+            html.setAttribute('data-theme','dark');
+            toggle.checked = true;
+          } else {
+            html.removeAttribute('data-theme');
+            toggle.checked = false;
+          }
+        }
+
+        function initialTheme(){
+          try{
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if(saved === 'dark' || saved === 'light') return saved;
+          }catch(e){}
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        applyTheme(initialTheme());
+
+        toggle.addEventListener('change', () => {
+          const newTheme = toggle.checked ? 'dark' : 'light';
+          applyTheme(newTheme);
+          try{ localStorage.setItem(STORAGE_KEY,newTheme); }catch(e){}
+        });
+      })();
+    </script>
+    <!-- End Dark Mode Switch Theme -->
+
+</body>
+</html>

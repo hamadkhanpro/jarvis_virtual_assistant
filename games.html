@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jarvis Games</title>
+    <link rel="shortcut icon" href="avatar.png" type="image/x-icon">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: manipulation;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 25px;
+        }
+        
+        .game-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+        }
+        
+        .game-btn:active {
+            transform: translateY(2px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .game-btn div {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .game-btn span {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .game-display {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        .game-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            color: #ffcc00;
+        }
+        
+        .game-content {
+            display: none;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        /* Memory Game Styles */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+        
+        .memory-card {
+            width: 100%;
+            aspect-ratio: 1;
+            background-color: #6a11cb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+            background-color: #ff6b6b;
+        }
+        
+        /* Snake Game Styles */
+        .snake-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #snake-board {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+        }
+        
+        .snake-controls {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            max-width: 250px;
+        }
+        
+        .snake-controls button {
+            padding: 12px;
+        }
+        
+        .snake-controls button:first-child {
+            grid-column: 2;
+        }
+        
+        .snake-controls button:nth-child(2) {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        .snake-controls button:nth-child(3) {
+            grid-column: 2;
+            grid-row: 2;
+        }
+        
+        .snake-controls button:nth-child(4) {
+            grid-column: 3;
+            grid-row: 2;
+        }
+        
+        /* Tic Tac Toe Styles */
+        .tic-tac-toe-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 0 auto;
+            max-width: 300px;
+        }
+        
+        .cell {
+            width: 100%;
+            aspect-ratio: 1;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .cell:active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Rock Paper Scissors Styles */
+        .rps-container {
+            text-align: center;
+        }
+        
+        .rps-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .rps-option {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .rps-option:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Common button styles */
+        button {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            display: inline-block;
+            min-height: 44px;
+        }
+        
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .score {
+            text-align: center;
+            margin: 12px 0;
+            font-size: 1.1rem;
+        }
+        
+        .game-instructions {
+            text-align: center;
+            margin-top: 12px;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        .back-button {
+            display: block;
+            margin: 15px auto;
+            text-align: center;
+        }
+        
+        /* Mobile Landscape Optimization */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .game-container {
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            .game-btn {
+                aspect-ratio: 1.5;
+            }
+            
+            .game-btn div {
+                font-size: 2rem;
+                margin-bottom: 5px;
+            }
+            
+            .game-btn span {
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Larger Phones */
+        @media (min-width: 400px) {
+            .game-btn div {
+                font-size: 2.8rem;
+            }
+            
+            .game-btn span {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* Tablets and larger devices */
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .game-container {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+                max-width: 800px;
+            }
+            
+            .game-btn {
+                padding: 15px;
+            }
+            
+            .game-btn div {
+                font-size: 3rem;
+            }
+            
+            .game-btn span {
+                font-size: 1.2rem;
+            }
+            
+            .game-display {
+                max-width: 600px;
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Jarvis 4 Mini Games</h1>
+        <p class="subtitle">TAP ON A GAME TO PLAY! HAVE FUN!</p>
+    </header>
+    
+    <div class="game-container">
+        <div class="game-btn" onclick="showGame('memory')">
+            <div>🎮</div>
+            <span>MEMORY</span>
+        </div>
+        
+        <div class="game-btn" onclick="showGame('snake')">
+            <div>🐍</div>
+            <span>SNAKE</span>
+        </div>
+        
+        <div class="game-btn" onclick="showGame('tictactoe')">
+            <div>❌⭕</div>
+            <span>TIC TAC TOE</span>
+        </div>
+        
+        <div class="game-btn" onclick="showGame('rps')">
+            <div>✊✂️</div>
+            <span>RPS</span>
+        </div>
+    </div>
+    
+    <div class="game-display">
+        <h2 class="game-title" id="current-game">Select a Game to Play</h2>
+        
+        <div id="memory" class="game-content">
+            <div class="score">Matches Found: <span id="matches">0</span>/8</div>
+            <div class="memory-grid" id="memory-grid"></div>
+            <div class="game-instructions">Tap on cards to find matching pairs!</div>
+            <div style="text-align: center; margin-top: 15px;">
+                <button onclick="resetMemoryGame()">Reset Game</button>
+            </div>
+        </div>
+        
+        <div id="snake" class="game-content">
+            <div class="snake-container">
+                <div class="score">Score: <span id="snake-score">0</span></div>
+                <canvas id="snake-board" width="350" height="350"></canvas>
+                <div class="snake-controls">
+                    <button onclick="changeDirection('up')">↑</button>
+                    <button onclick="changeDirection('left')">←</button>
+                    <button onclick="changeDirection('down')">↓</button>
+                    <button onclick="changeDirection('right')">→</button>
+                </div>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button onclick="resetSnakeGame()">Reset Game</button>
+                </div>
+                <div class="game-instructions">Use buttons or swipe to control the snake</div>
+            </div>
+        </div>
+        
+        <div id="tictactoe" class="game-content">
+            <div class="score" id="ttt-status">Player X's Turn</div>
+            <div class="tic-tac-toe-board" id="ttt-board">
+                <div class="cell" onclick="makeMove(0)"></div>
+                <div class="cell" onclick="makeMove(1)"></div>
+                <div class="cell" onclick="makeMove(2)"></div>
+                <div class="cell" onclick="makeMove(3)"></div>
+                <div class="cell" onclick="makeMove(4)"></div>
+                <div class="cell" onclick="makeMove(5)"></div>
+                <div class="cell" onclick="makeMove(6)"></div>
+                <div class="cell" onclick="makeMove(7)"></div>
+                <div class="cell" onclick="makeMove(8)"></div>
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <button onclick="resetTicTacToe()">Reset Game</button>
+            </div>
+        </div>
+        
+        <div id="rps" class="game-content">
+            <div class="rps-container">
+                <div class="score">
+                    <div>Player: <span id="player-score">0</span></div>
+                    <div>Computer: <span id="computer-score">0</span></div>
+                </div>
+                <div class="rps-options">
+                    <div class="rps-option" onclick="playGame('rock')">✊</div>
+                    <div class="rps-option" onclick="playGame('paper')">📄</div>
+                    <div class="rps-option" onclick="playGame('scissors')">✂️</div>
+                </div>
+                <div id="rps-result">Choose your weapon!</div>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button onclick="resetRPS()">Reset Scores</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-button" onclick="window.location.href='index.html'">Back to Main</button>
+
+    <script>
+        // Game selection function
+        function showGame(gameId) {
+            // Hide all game contents
+            document.querySelectorAll('.game-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show selected game
+            document.getElementById(gameId).classList.add('active');
+            
+            // Update game title
+            const gameTitles = {
+                'memory': 'MEMORY GAME',
+                'snake': 'SNAKE GAME',
+                'tictactoe': 'TIC TAC TOE',
+                'rps': 'ROCK PAPER SCISSORS'
+            };
+            
+            document.getElementById('current-game').textContent = gameTitles[gameId];
+            
+            // Initialize the game if needed
+            if (gameId === 'memory' && !memoryInitialized) {
+                initMemoryGame();
+            } else if (gameId === 'snake') {
+                initSnakeGame();
+            } else if (gameId === 'tictactoe' && !tttInitialized) {
+                resetTicTacToe();
+            }
+        }
+        
+        // Memory Game Logic
+        let memoryInitialized = false;
+        let flippedCards = [];
+        let matchedPairs = 0;
+        
+        function initMemoryGame() {
+            const symbols = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
+            const cards = [...symbols, ...symbols];
+            
+            // Shuffle cards
+            cards.sort(() => Math.random() - 0.5);
+            
+            const memoryGrid = document.getElementById('memory-grid');
+            memoryGrid.innerHTML = '';
+            
+            cards.forEach((symbol, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.index = index;
+                card.dataset.symbol = symbol;
+                card.innerHTML = '<span style="opacity: 0;">' + symbol + '</span>';
+                card.addEventListener('click', () => flipCard(card));
+                memoryGrid.appendChild(card);
+            });
+            
+            memoryInitialized = true;
+        }
+        
+        function flipCard(card) {
+            if (flippedCards.length < 2 && !flippedCards.includes(card) && !card.classList.contains('flipped')) {
+                card.classList.add('flipped');
+                card.innerHTML = '<span>' + card.dataset.symbol + '</span>';
+                flippedCards.push(card);
+                
+                if (flippedCards.length === 2) {
+                    setTimeout(checkMatch, 700);
+                }
+            }
+        }
+        
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            
+            if (card1.dataset.symbol === card2.dataset.symbol) {
+                // Match found
+                card1.style.visibility = 'hidden';
+                card2.style.visibility = 'hidden';
+                matchedPairs++;
+                document.getElementById('matches').textContent = matchedPairs;
+                
+                if (matchedPairs === 8) {
+                    setTimeout(() => {
+                        alert('Congratulations! You found all matches!');
+                    }, 500);
+                }
+            } else {
+                // No match
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+                card1.innerHTML = '<span style="opacity: 0;">' + card1.dataset.symbol + '</span>';
+                card2.innerHTML = '<span style="opacity: 0;">' + card2.dataset.symbol + '</span>';
+            }
+            
+            flippedCards = [];
+        }
+        
+        function resetMemoryGame() {
+            flippedCards = [];
+            matchedPairs = 0;
+            document.getElementById('matches').textContent = '0';
+            initMemoryGame();
+        }
+        
+        // Snake Game Logic
+        let snakeContext;
+        let snake = [];
+        let food = {};
+        let dx = 10;
+        let dy = 0;
+        let score = 0;
+        let gameInterval;
+        
+        function initSnakeGame() {
+            const canvas = document.getElementById('snake-board');
+            // Adjust canvas size for mobile
+            const size = Math.min(350, window.innerWidth - 40);
+            canvas.width = size;
+            canvas.height = size;
+            
+            snakeContext = canvas.getContext('2d');
+            
+            // Initialize snake
+            const startX = Math.floor(canvas.width / 2 / 10) * 10;
+            const startY = Math.floor(canvas.height / 2 / 10) * 10;
+            
+            snake = [
+                {x: startX, y: startY},
+                {x: startX - 10, y: startY},
+                {x: startX - 20, y: startY},
+                {x: startX - 30, y: startY},
+                {x: startX - 40, y: startY}
+            ];
+            
+            // Generate first food
+            generateFood();
+            
+            // Set up controls
+            setupSwipeControls();
+            
+            // Start game loop if not already running
+            if (gameInterval) {
+                clearInterval(gameInterval);
+            }
+            
+            score = 0;
+            document.getElementById('snake-score').textContent = score;
+            
+            gameInterval = setInterval(gameLoop, 100);
+        }
+        
+        function gameLoop() {
+            if (hasGameEnded()) {
+                clearInterval(gameInterval);
+                alert('Game Over! Your score: ' + score);
+                return;
+            }
+            
+            moveSnake();
+            draw();
+        }
+        
+        function draw() {
+            const canvas = document.getElementById('snake-board');
+            // Clear canvas
+            snakeContext.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            snakeContext.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw snake
+            snake.forEach(segment => {
+                snakeContext.fillStyle = 'lightgreen';
+                snakeContext.fillRect(segment.x, segment.y, 10, 10);
+                
+                snakeContext.strokeStyle = 'darkgreen';
+                snakeContext.strokeRect(segment.x, segment.y, 10, 10);
+            });
+            
+            // Draw food
+            snakeContext.fillStyle = 'red';
+            snakeContext.fillRect(food.x, food.y, 10, 10);
+        }
+        
+        function moveSnake() {
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            snake.unshift(head);
+            
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                document.getElementById('snake-score').textContent = score;
+                generateFood();
+            } else {
+                snake.pop();
+            }
+        }
+        
+        function generateFood() {
+            const canvas = document.getElementById('snake-board');
+            const x = Math.floor(Math.random() * (canvas.width / 10)) * 10;
+            const y = Math.floor(Math.random() * (canvas.height / 10)) * 10;
+            
+            // Make sure food doesn't appear on snake
+            if (snake.some(segment => segment.x === x && segment.y === y)) {
+                generateFood();
+            } else {
+                food = {x, y};
+            }
+        }
+        
+        function changeDirection(direction) {
+            const goingUp = dy === -10;
+            const goingDown = dy === 10;
+            const goingRight = dx === 10;
+            const goingLeft = dx === -10;
+            
+            if (direction === 'left' && !goingRight) {
+                dx = -10;
+                dy = 0;
+            } else if (direction === 'up' && !goingDown) {
+                dx = 0;
+                dy = -10;
+            } else if (direction === 'right' && !goingLeft) {
+                dx = 10;
+                dy = 0;
+            } else if (direction === 'down' && !goingUp) {
+                dx = 0;
+                dy = 10;
+            }
+        }
+        
+        function setupSwipeControls() {
+            const canvas = document.getElementById('snake-board');
+            let touchStartX = 0;
+            let touchStartY = 0;
+            
+            canvas.addEventListener('touchstart', function(event) {
+                touchStartX = event.touches[0].clientX;
+                touchStartY = event.touches[0].clientY;
+                event.preventDefault();
+            }, false);
+            
+            canvas.addEventListener('touchmove', function(event) {
+                event.preventDefault();
+            }, false);
+            
+            canvas.addEventListener('touchend', function(event) {
+                const touchEndX = event.changedTouches[0].clientX;
+                const touchEndY = event.changedTouches[0].clientY;
+                
+                const dxSwipe = touchEndX - touchStartX;
+                const dySwipe = touchEndY - touchStartY;
+                
+                // Minimum swipe distance
+                if (Math.max(Math.abs(dxSwipe), Math.abs(dySwipe)) > 30) {
+                    if (Math.abs(dxSwipe) > Math.abs(dySwipe)) {
+                        // Horizontal swipe
+                        if (dxSwipe > 0) {
+                            changeDirection('right');
+                        } else {
+                            changeDirection('left');
+                        }
+                    } else {
+                        // Vertical swipe
+                        if (dySwipe > 0) {
+                            changeDirection('down');
+                        } else {
+                            changeDirection('up');
+                        }
+                    }
+                }
+                
+                event.preventDefault();
+            }, false);
+        }
+        
+        function hasGameEnded() {
+            const head = snake[0];
+            const canvas = document.getElementById('snake-board');
+            
+            // Hit wall
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+                return true;
+            }
+            
+            // Hit self
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        function resetSnakeGame() {
+            clearInterval(gameInterval);
+            initSnakeGame();
+        }
+        
+        // Tic Tac Toe Logic
+        let tttInitialized = false;
+        let currentPlayer = 'X';
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = true;
+        
+        function makeMove(index) {
+            if (board[index] !== '' || !gameActive) return;
+            
+            board[index] = currentPlayer;
+            document.getElementsByClassName('cell')[index].textContent = currentPlayer;
+            
+            if (checkWinner()) {
+                document.getElementById('ttt-status').textContent = `Player ${currentPlayer} wins!`;
+                gameActive = false;
+                return;
+            }
+            
+            if (board.every(cell => cell !== '')) {
+                document.getElementById('ttt-status').textContent = "It's a draw!";
+                gameActive = false;
+                return;
+            }
+            
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            document.getElementById('ttt-status').textContent = `Player ${currentPlayer}'s Turn`;
+        }
+        
+        function checkWinner() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                [0, 4, 8], [2, 4, 6]             // diagonals
+            ];
+            
+            return winPatterns.some(pattern => {
+                const [a, b, c] = pattern;
+                return board[a] !== '' && board[a] === board[b] && board[a] === board[c];
+            });
+        }
+        
+        function resetTicTacToe() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            
+            const cells = document.getElementsByClassName('cell');
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].textContent = '';
+            }
+            
+            document.getElementById('ttt-status').textContent = "Player X's Turn";
+            tttInitialized = true;
+        }
+        
+        // Rock Paper Scissors Logic
+        let playerScore = 0;
+        let computerScore = 0;
+        
+        function playGame(playerChoice) {
+            const choices = ['rock', 'paper', 'scissors'];
+            const computerChoice = choices[Math.floor(Math.random() * 3)];
+            
+            let result = '';
+            
+            if (playerChoice === computerChoice) {
+                result = "It's a tie!";
+            } else if (
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'paper' && computerChoice === 'rock') ||
+                (playerChoice === 'scissors' && computerChoice === 'paper')
+            ) {
+                result = "You win!";
+                playerScore++;
+            } else {
+                result = "Computer wins!";
+                computerScore++;
+            }
+            
+            document.getElementById('player-score').textContent = playerScore;
+            document.getElementById('computer-score').textContent = computerScore;
+            document.getElementById('rps-result').textContent = `You chose ${playerChoice}, computer chose ${computerChoice}. ${result}`;
+        }
+        
+        function resetRPS() {
+            playerScore = 0;
+            computerScore = 0;
+            document.getElementById('player-score').textContent = playerScore;
+            document.getElementById('computer-score').textContent = computerScore;
+            document.getElementById('rps-result').textContent = 'Choose your weapon!';
+        }
+        
+        // Initialize the first game on page load
+        window.onload = function() {
+            showGame('memory');
+        };
+    </script>
+
+<!-- Menu Button -->
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+<!-- End Menu Button -->
+
+<!-- Social Links -->
+  <div class="social-links" id="socialLinks">
+    <ul>
+      <li><a href="https://hamadkhan.infy.uk" target="_blank"><img src="website.png" alt="Website"></a></li>
+      <li><a href="https://github.com/hamadkhanpro" target="_blank"><img src="gethub.png" alt="GitHub"></a></li>
+      <li><a href="https://www.fiverr.com/hamadkhantech/" target="_blank"><img src="fiverr.png" alt="Fiverr"></a></li>
+      <li><a href="https://www.upwork.com/freelancers/hamadk27" target="_blank"><img src="upwork.png" alt="UpWork"></a></li>
+      <li><a href="https://www.youtube.com/@hamadkhantech" target="_blank"><img src="youtube.png" alt="YouTube"></a></li>
+      <li><a href="https://www.facebook.com/hamadkhan987" target="_blank"><img src="facebook.png" alt="Facebook"></a></li>
+      <li><a href="https://www.instagram.com/hamadkhan_987/" target="_blank"><img src="instagram.png" alt="Instagram"></a></li>
+      <li><a href="https://wa.me/923479787164" target="_blank"><img src="whatsapp.png" alt="WhatsApp"></a></li>
+      <li><a href="https://www.snapchat.com/add/hamadkhan_987" target="_blank"><img src="snapchat.png" alt="Snapchat"></a></li>
+    </ul>
+  </div>
+<!--End Social Links -->
+
+<!-- Menu Social Links -->
+  <script>
+    function toggleMenu() {
+    document.getElementById("socialLinks").classList.toggle("open");}
+  </script>
+<!-- End Menu Social Links -->
+
+<!-- Menu Button -->
+  <style>
+    .menu-btn {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 1100;
+      width: 40px;
+      height: 40px;
+      background: #48a6ff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+/* End Menu Button */
+
+/* Social Links Container */
+    .social-links {
+      position: absolute;
+      top: 70px;
+      left: 21px;
+      z-index: 1000;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.6s ease;
+    }
+
+    .social-links.open {
+      max-height: 600px; /* enough for all items */
+    }
+
+    .social-links ul {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      margin: 0;
+      gap: 10px;
+    }
+
+    .social-links li {
+      list-style: none;
+      border-radius: 50px;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      /* Animation hidden state */
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.5s ease;
+    }
+
+    /* Animate items one by one */
+    .social-links.open li {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .social-links.open li:nth-child(1) { transition-delay: 0.1s; }
+    .social-links.open li:nth-child(2) { transition-delay: 0.2s; }
+    .social-links.open li:nth-child(3) { transition-delay: 0.3s; }
+    .social-links.open li:nth-child(4) { transition-delay: 0.4s; }
+    .social-links.open li:nth-child(5) { transition-delay: 0.5s; }
+    .social-links.open li:nth-child(6) { transition-delay: 0.6s; }
+    .social-links.open li:nth-child(7) { transition-delay: 0.7s; }
+    .social-links.open li:nth-child(8) { transition-delay: 0.8s; }
+    .social-links.open li:nth-child(9) { transition-delay: 0.9s; }
+
+    .social-links li a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .social-links img {
+      width: 25px;
+      height: 25px;
+      object-fit: contain;
+    }
+
+    /* Colors */
+    .social-links li:nth-child(1) { background: #d42b7a; } /* Website */
+    .social-links li:nth-child(2) { background: #424242; } /* GitHub */
+    .social-links li:nth-child(3) { background: #1DBF73; } /* Fiverr */
+    .social-links li:nth-child(4) { background: #14A800; } /* UpWork */
+    .social-links li:nth-child(5) { background: #FF0000; } /* YouTube */
+    .social-links li:nth-child(6) { background: #1877f2; } /* Facebook */
+    .social-links li:nth-child(7) { background: radial-gradient(circle at 30% 107%, 
+      #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+    } /* Instagram */
+    .social-links li:nth-child(8) { background: #25D366; } /* WhatsApp */
+    .social-links li:nth-child(9) { background: #FFFC00; } /* Snapchat */
+
+    .social-links li:hover {
+      transform: scale(1.1);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .menu-btn {
+        top: 15px;
+        left: 15px;
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
+      }
+      .social-links {
+        top: 65px;
+        left: 26px;
+      }
+      .social-links li {
+        width: 30px;
+        height: 30px;
+      }
+      .social-links img {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  </style>
+<!-- Social Links Container -->
+
+<!-- Dark Mode Switch Theme -->
+  <label class="toggle">
+    <input id="themeToggle" type="checkbox" aria-label="Toggle dark mode">
+    <span class="track"><span class="knob"></span></span>
+  </label>
+
+  <script>
+    (function(){
+      const STORAGE_KEY = 'site-theme';
+      const html = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+
+      function applyTheme(theme){
+        if(theme === 'dark'){
+          html.setAttribute('data-theme','dark');
+          toggle.checked = true;
+        } else {
+          html.removeAttribute('data-theme');
+          toggle.checked = false;
+        }
+      }
+
+      function initialTheme(){
+        try{
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if(saved === 'dark' || saved === 'light') return saved;
+        }catch(e){}
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      applyTheme(initialTheme());
+
+      toggle.addEventListener('change', () => {
+        const newTheme = toggle.checked ? 'dark' : 'light';
+        applyTheme(newTheme);
+        try{ localStorage.setItem(STORAGE_KEY,newTheme); }catch(e){}
+      });
+    })();
+  </script>
+
+  <style>
+    :root{
+      --bg: #336275;
+      --text: #0f1724;
+      --accent: #0066ff;
+      --transition: 250ms ease;
+    }
+    html[data-theme='dark']{
+      --bg: #0b1220;
+      --text: #e6eef8;
+      --accent: #48a6ff;
+    }
+    body{
+      background:var(--bg);
+      color:var(--text);
+      transition: background var(--transition), color var(--transition);
+    }
+    .toggle{
+      --w:52px; --h:30px; --pad:4px;
+      position: absolute;
+      top:1rem;
+      right:1rem;
+      width:var(--w);
+      height:var(--h);
+      z-index:1000;
+    }
+    .toggle input{
+      position:absolute;inset:0;opacity:0;cursor:pointer;
+    }
+    .track{
+      position:absolute;inset:0;border-radius:999px;background:rgba(0,0,0,0.08);
+      display:flex;align-items:center;padding:var(--pad);
+      transition:background var(--transition);
+    }
+    html[data-theme='dark'] .track{background:rgba(255,255,255,0.1)}
+    .knob{
+      width:calc(var(--h) - var(--pad)*2);
+      height:calc(var(--h) - var(--pad)*2);
+      border-radius:999px;background:var(--bg);
+      box-shadow:0 2px 6px rgba(0,0,0,0.2);
+      transform:translateX(0);
+      transition:transform var(--transition), background var(--transition);
+    }
+    .toggle input:checked + .track{
+      background:var(--accent);
+    }
+    .toggle input:checked + .track .knob{
+      transform:translateX(calc(var(--w) - var(--h)));
+    }
+  </style>
+<!--End Dark Mode Switch Theme -->
+</body>
+</html>
