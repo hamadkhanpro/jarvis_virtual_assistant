@@ -308,7 +308,7 @@ function takeCommand(message){
     }
     else if(message.includes("tell me about of pakistan")){
         speak("Pakistan, officially the Islamic Republic of Pakistan, is a country in South Asia. It is the fifth-most populous country, with a population of over 241.5 million, having the second-largest Muslim population as of 2023. Islamabad is the nation's capital, while Karachi is its largest city and financial centre.")
-        window.open("https://www.google.com/search?q=tell%20me%20about%20of%20pakistan","_blank")
+        window.open("https://www.google.com/search?q=pakistan&sca_esv=9594ada01a48a169&ei=sYPRaJv6DMyui-gP3IijqQU&ved=0ahUKEwjbltv97uyPAxVM1wIHHVzEKFUQ4dUDCBE&uact=5&oq=pakistan&gs_lp=Egxnd3Mtd2l6LXNlcnAiCHBha2lzdGFuMhAQABiABBixAxhDGIMBGIoFMhAQLhiABBixAxhDGIMBGIoFMhAQLhiABBixAxhDGIMBGIoFMgoQABiABBhDGIoFMgYQABgHGB4yChAAGIAEGEMYigUyBhAAGAcYHjIGEAAYBxgeMgYQABgHGB4yChAAGIAEGEMYigVIsgdQAFgAcAB4AZABAJgBswKgAbMCqgEDMy0xuAEDyAEA-AEBmAIBoALmApgDAJIHAzMtMaAHqgqyBwMzLTG4B-YCwgcDNC0xyAcp&sclient=gws-wiz-serp","_blank")
     }
     else if(message.includes("tell me about of university of swabi")){
         speak("University of Swabi was established in 2012 with the mission to advance knowledge and learning through quality research and education for the whole nation. Currently, the university comprises of two campuses, old campus and main campus having a combined area of 188 acres nears M1 Motorway.")
