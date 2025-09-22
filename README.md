@@ -6,9 +6,15 @@ Hamad Khan is a final-year student pursuing a Bachelor of Science degree in Comp
 So, I have gained all the basic knowledge from my study. that’s why I knew many works related to web programming before entering this business. I’m a dynamic and driven individual with a passion for technology, innovation and lifelong learning. my journey is marked by a strong academic foundation, a diverse skill set and a deep interest in leveraging technology to solve real-world problems. with a blend of technical expertise and creative thinking, I am carving out a unique path for himself in the ever-evolving world of technology.
 
 Socials Media Links
+
 Portfolio Website: https://hamadkhan.infy.uk
+
 GitHub: https://github.com/hamadkhanpro
+
 LinkedIn: https://www.linkedin.com/in/hamad-khan-277622373
+
 Fiverr: https://www.fiverr.com/hamadkhantech/
+
 Upwork: https://www.upwork.com/freelancers/hamadk27
+
 YouTube: https://www.youtube.com/@hamadkhantech
