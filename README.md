@@ -21,11 +21,8 @@ YouTube: https://www.youtube.com/@hamadkhantech
 
 <img width="1349" height="605" alt="Image" src="https://github.com/user-attachments/assets/ed6ec42e-d33d-41dd-b9a3-007befaa1613" />
 
-
 <img width="1349" height="604" alt="Image" src="https://github.com/user-attachments/assets/289ae17c-a77e-488c-975e-a37151471e58" />
 
-
 <img width="1345" height="604" alt="Image" src="https://github.com/user-attachments/assets/bc63c4b5-838f-4ddd-b1ac-d9401f9b5b81" />
-
 
 <img width="1350" height="604" alt="Image" src="https://github.com/user-attachments/assets/18881601-1b39-4830-88a4-1441ab971522" />
