@@ -5,19 +5,24 @@ Hamad Khan is a final-year student pursuing a Bachelor of Science degree in Comp
 
 So, I have gained all the basic knowledge from my study. that’s why I knew many works related to web programming before entering this business. I’m a dynamic and driven individual with a passion for technology, innovation and lifelong learning. my journey is marked by a strong academic foundation, a diverse skill set and a deep interest in leveraging technology to solve real-world problems. with a blend of technical expertise and creative thinking, I am carving out a unique path for himself in the ever-evolving world of technology.
 
-Socials Media Links
+(Socials Media Links)
 
-Portfolio Website: https://hamadkhan.infy.uk
+Portfolio Website: 
+https://hamadkhan.infy.uk
 
-GitHub: https://github.com/hamadkhanpro
+GitHub: 
+https://github.com/hamadkhanpro
 
 LinkedIn: https://www.linkedin.com/in/hamad-khan-277622373
 
-Fiverr: https://www.fiverr.com/hamadkhantech/
+Fiverr: 
+https://www.fiverr.com/hamadkhantech/
 
-Upwork: https://www.upwork.com/freelancers/hamadk27
+Upwork: 
+https://www.upwork.com/freelancers/hamadk27
 
-YouTube: https://www.youtube.com/@hamadkhantech
+YouTube: 
+https://www.youtube.com/@hamadkhantech
 
 <img width="1349" height="605" alt="Image" src="https://github.com/user-attachments/assets/ed6ec42e-d33d-41dd-b9a3-007befaa1613" />
 
@@ -25,4 +30,4 @@ YouTube: https://www.youtube.com/@hamadkhantech
 
 <img width="1345" height="604" alt="Image" src="https://github.com/user-attachments/assets/bc63c4b5-838f-4ddd-b1ac-d9401f9b5b81" />
 
-<img width="1350" height="604" alt="Image" src="https://github.com/user-attachments/assets/18881601-1b39-4830-88a4-1441ab971522" />
+<img width="1349" height="604" alt="Image" src="https://github.com/user-attachments/assets/556e9e17-7139-4f29-9629-707bb16eb30f" />
